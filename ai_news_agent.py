@@ -7,7 +7,6 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from duckduckgo_search import DDGS
 
-# Load environment variables
 load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -46,7 +45,7 @@ def search_and_summarize_september_news():
     print("SEARCHING: Latest News and Updates in September 2025")
     print("=" * 80 + "\n")
     
-    # Search for September 2025 news
+    
     search_query = "latest news and update in September 2025"
     articles = web_search(search_query, max_results=20)
     
@@ -56,7 +55,7 @@ def search_and_summarize_september_news():
     
     print(f"Found {len(articles)} articles. Analyzing...\n")
     
-    # Create assistant for analysis and summarization
+    
     assistant = client.beta.assistants.create(
         name="September 2025 News Analyzer",
         instructions="""You are an expert news analyst. Your task is to:
@@ -74,12 +73,12 @@ def search_and_summarize_september_news():
         Make it exciting and informative!""",
         model="gpt-4o"
     )
-    
-    # Create thread and send articles
+
     thread = client.beta.threads.create()
     
     articles_text = json.dumps(articles, indent=2)
     
+
     client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
@@ -90,7 +89,7 @@ def search_and_summarize_september_news():
 Focus on the most impactful, interesting, and relevant news."""
     )
     
-    # Run the assistant
+    
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
         assistant_id=assistant.id
@@ -98,7 +97,7 @@ Focus on the most impactful, interesting, and relevant news."""
     
     print("AI analyzing and creating summaries...\n")
     
-    # Wait for completion
+
     while True:
         run_status = client.beta.threads.runs.retrieve(
             thread_id=thread.id,
@@ -113,7 +112,7 @@ Focus on the most impactful, interesting, and relevant news."""
         
         time.sleep(1)
     
-    # Get and display results
+    
     messages = client.beta.threads.messages.list(thread_id=thread.id)
     
     print("=" * 80)
@@ -129,7 +128,7 @@ Focus on the most impactful, interesting, and relevant news."""
     
     print("\n" + "=" * 80)
     
-    # Cleanup
+    
     client.beta.assistants.delete(assistant.id)
     print("\nSearch and analysis complete!")
 
